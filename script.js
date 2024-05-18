@@ -43,12 +43,18 @@ async function calculateMileage() {
         } else {
             console.error('Directions request failed due to ' + status);
             alert('Failed to calculate the route. Status: ' + status);
-            console.error('Result:', result); // Log the result for debugging
+            console.error('Error details:', result); // Log the error details for debugging
         }
     });
 }
 
 function displayResult(result) {
+    if (!result || !result.routes || result.routes.length === 0) {
+        console.error('No routes found in result:', result);
+        alert('No routes found. Please check your input.');
+        return;
+    }
+
     const route = result.routes[0];
     const totalTime = route.legs.reduce((sum, leg) => sum + leg.duration.value, 0) / 3600; // Convert seconds to hours
     const totalDistance = route.legs.reduce((sum, leg) => sum + leg.distance.value, 0) / 1000; // Convert meters to kilometers
