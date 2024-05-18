@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RouteXL Mileage Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>RouteXL Mileage Calculator</h1>
+    <form id="route-form">
+        <div class="form-group">
+            <label for="origin">Enter the origin address:</label>
+            <input type="text" id="origin">
+        </div>
+        <div class="form-group">
+            <label for="destinations">Enter destination addresses (one per line):</label>
+            <textarea id="destinations" rows="10"></textarea>
+        </div>
+        <button type="button" onclick="calculateMileage()">Calculate Mileage</button>
+    </form>
+    <div id="result"></div>
+    <script src="script.js"></script>
+</body>
+</html>
