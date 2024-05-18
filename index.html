@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RouteXL Mileage Calculator</title>
+    <title>Google Maps Mileage Calculator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -41,7 +41,7 @@
     </style>
 </head>
 <body>
-    <h1>RouteXL Mileage Calculator</h1>
+    <h1>Google Maps Mileage Calculator</h1>
     <form id="route-form">
         <div class="form-group">
             <label for="origin">Enter the origin address:</label>
@@ -54,6 +54,7 @@
         <button type="button" onclick="calculateMileage()">Calculate Mileage</button>
     </form>
     <div id="result"></div>
-    <script src="script.js"></script>
+    <script src="script_v1.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFwVkP3nwHAZb6oPCm9THB2db-_pMJt4M&callback=initMap" async defer></script>
 </body>
 </html>
