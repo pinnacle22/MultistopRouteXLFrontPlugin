@@ -34,6 +34,8 @@ async function calculateMileage() {
         optimizeWaypoints: true
     };
 
+    console.log('Request:', request); // Log the request for debugging
+
     directionsService.route(request, function(result, status) {
         if (status === 'OK') {
             displayResult(result);
@@ -41,6 +43,7 @@ async function calculateMileage() {
         } else {
             console.error('Directions request failed due to ' + status);
             alert('Failed to calculate the route. Status: ' + status);
+            console.error('Result:', result); // Log the result for debugging
         }
     });
 }
