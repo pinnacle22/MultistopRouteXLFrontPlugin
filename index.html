@@ -12,6 +12,11 @@
         #output {
             margin-top: 20px;
         }
+        #loading {
+            display: none;
+            font-size: 1.2em;
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -24,6 +29,7 @@
     <br><br>
     <button onclick="optimizeRoute()">Optimize Route</button>
 
+    <div id="loading">Calculating route, please wait...</div>
     <div id="output"></div>
     <div id="map"></div>
 
@@ -65,7 +71,9 @@
                 travelMode: 'DRIVING'
             };
 
+            document.getElementById('loading').style.display = 'block';
             directionsService.route(request, function(result, status) {
+                document.getElementById('loading').style.display = 'none';
                 if (status === 'OK') {
                     directionsRenderer.setDirections(result);
                     const route = result.routes[0];
@@ -86,11 +94,39 @@
                     summaryPanel.innerHTML += `<b>Total Distance:</b> ${totalDistanceMiles} miles<br>`;
 
                     const mapUrl = generateMapUrl(origin, destinations[destinations.length - 1], waypointOrder);
-                    summaryPanel.innerHTML += `<a href="${mapUrl}" target="_blank">View Map</a>`;
+                    summaryPanel.innerHTML += `<a href="${mapUrl}" target="_blank">${mapUrl}</a>`;
                 } else {
-                    alert('Could not display directions due to: ' + status);
+                    handleRouteError(status);
                 }
             });
+        }
+
+        function handleRouteError(status) {
+            let errorMessage = 'An error occurred while fetching directions.';
+            switch (status) {
+                case 'NOT_FOUND':
+                    errorMessage = 'One of the locations specified in the request could not be geocoded.';
+                    break;
+                case 'ZERO_RESULTS':
+                    errorMessage = 'No route could be found between the origin and destination.';
+                    break;
+                case 'MAX_WAYPOINTS_EXCEEDED':
+                    errorMessage = 'Too many waypoints were provided in the request.';
+                    break;
+                case 'INVALID_REQUEST':
+                    errorMessage = 'The provided request was invalid.';
+                    break;
+                case 'OVER_QUERY_LIMIT':
+                    errorMessage = 'The service has received too many requests from your application within the allowed time period.';
+                    break;
+                case 'REQUEST_DENIED':
+                    errorMessage = 'The service denied use of the directions service by your application.';
+                    break;
+                case 'UNKNOWN_ERROR':
+                    errorMessage = 'An unknown error occurred.';
+                    break;
+            }
+            alert(errorMessage);
         }
 
         function generateMapUrl(origin, destination, waypoints) {
