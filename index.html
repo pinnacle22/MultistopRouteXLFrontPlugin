@@ -51,6 +51,15 @@
             width: 100%;
             margin-top: 20px;
         }
+        #logs {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #eee;
+            max-height: 200px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
@@ -73,7 +82,8 @@
         <p id="total-distance"></p>
     </div>
     <div id="map"></div>
-    <script src="script_v7.js"></script>
+    <div id="logs"></div>
+    <script src="script_v9.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsB8s6ehXK2nrbNAnfEEQ3dohsqQmsozk&callback=initMap" async defer></script>
 </body>
 </html>
