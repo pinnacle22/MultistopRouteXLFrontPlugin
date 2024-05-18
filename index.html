@@ -3,87 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Maps Mileage Calculator</title>
+    <title>Route Optimizer</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #result {
-            margin-top: 20px;
-        }
-        #output {
-            display: none;
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-        }
         #map {
             height: 500px;
             width: 100%;
-            margin-top: 20px;
         }
-        #logs {
+        #output {
             margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #eee;
-            max-height: 200px;
-            overflow-y: auto;
         }
     </style>
 </head>
 <body>
-    <h1>Google Maps Mileage Calculator</h1>
-    <form id="route-form">
-        <div class="form-group">
-            <label for="origin">Enter the origin address:</label>
-            <input type="text" id="origin">
-        </div>
-        <div class="form-group">
-            <label for="destinations">Enter destination addresses (one per line):</label>
-            <textarea id="destinations" rows="10"></textarea>
-        </div>
-        <button type="button" onclick="calculateMileage()">Calculate Mileage</button>
-    </form>
-    <div id="result"></div>
-    <div id="output">
-        <h2>Optimized Route</h2>
-        <p id="total-time"></p>
-        <p id="total-distance"></p>
-    </div>
+    <h1>Route Optimizer</h1>
+    <label for="origin">Origin:</label>
+    <input type="text" id="origin" placeholder="Enter origin">
+    <br><br>
+    <label for="destinations">Destinations (one per line):</label>
+    <textarea id="destinations" rows="10" cols="30" placeholder="Enter destinations"></textarea>
+    <br><br>
+    <button onclick="optimizeRoute()">Optimize Route</button>
+
+    <div id="output"></div>
     <div id="map"></div>
-    <div id="logs"></div>
-    <script src="script_v10.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsB8s6ehXK2nrbNAnfEEQ3dohsqQmsozk&callback=initMap" async defer></script>
+
+    <script>
+        let map;
+        let directionsService;
+        let directionsRenderer;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: -34.397, lng: 150.644 },
+                zoom: 8
+            });
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer();
+            directionsRenderer.setMap(map);
+        }
+
+        function optimizeRoute() {
+            const origin = document.getElementById('origin').value;
+            const destinationsText = document.getElementById('destinations').value;
+            const destinations = destinationsText.split('\n').filter(line => line.trim() !== '');
+
+            if (!origin || destinations.length === 0) {
+                alert("Please enter an origin and at least one destination.");
+                return;
+            }
+
+            const waypoints = destinations.map(destination => ({
+                location: destination,
+                stopover: true
+            }));
+
+            const request = {
+                origin: origin,
+                destination: destinations[destinations.length - 1],
+                waypoints: waypoints.slice(0, -1),
+                optimizeWaypoints: true,
+                travelMode: 'DRIVING'
+            };
+
+            directionsService.route(request, function(result, status) {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(result);
+                    const route = result.routes[0];
+                    const summaryPanel = document.getElementById('output');
+                    summaryPanel.innerHTML = '';
+
+                    let totalDistance = 0;
+                    for (let i = 0; i < route.legs.length; i++) {
+                        totalDistance += route.legs[i].distance.value;
+                        summaryPanel.innerHTML += `<b>Segment ${i + 1}:</b> ${route.legs[i].start_address} to ${route.legs[i].end_address}<br>`;
+                        summaryPanel.innerHTML += `${route.legs[i].distance.text}, ${route.legs[i].duration.text}<br><br>`;
+                    }
+                    summaryPanel.innerHTML += `<b>Total Distance:</b> ${(totalDistance / 1000).toFixed(2)} km`;
+                } else {
+                    alert('Could not display directions due to: ' + status);
+                }
+            });
+        }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsB8s6ehXK2nrbNAnfEEQ3dohsqQmsozk&callback=initMap">
+    </script>
 </body>
 </html>
