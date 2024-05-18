@@ -73,16 +73,35 @@
                     summaryPanel.innerHTML = '';
 
                     let totalDistance = 0;
+                    let waypointOrder = route.waypoint_order.map(index => destinations[index]);
+                    waypointOrder.unshift(origin);
+                    waypointOrder.push(destinations[destinations.length - 1]);
+
                     for (let i = 0; i < route.legs.length; i++) {
                         totalDistance += route.legs[i].distance.value;
                         summaryPanel.innerHTML += `<b>Segment ${i + 1}:</b> ${route.legs[i].start_address} to ${route.legs[i].end_address}<br>`;
                         summaryPanel.innerHTML += `${route.legs[i].distance.text}, ${route.legs[i].duration.text}<br><br>`;
                     }
-                    summaryPanel.innerHTML += `<b>Total Distance:</b> ${(totalDistance / 1000).toFixed(2)} km`;
+                    const totalDistanceMiles = Math.round(totalDistance * 0.000621371);
+                    summaryPanel.innerHTML += `<b>Total Distance:</b> ${totalDistanceMiles} miles<br>`;
+
+                    const mapUrl = generateMapUrl(origin, destinations[destinations.length - 1], waypointOrder);
+                    summaryPanel.innerHTML += `<a href="${mapUrl}" target="_blank">View Map</a>`;
                 } else {
                     alert('Could not display directions due to: ' + status);
                 }
             });
+        }
+
+        function generateMapUrl(origin, destination, waypoints) {
+            const baseUrl = "https://www.google.com/maps/dir/?api=1";
+            const originParam = `origin=${encodeURIComponent(origin)}`;
+            const destinationParam = `destination=${encodeURIComponent(destination)}`;
+            const waypointsParam = waypoints.length > 2
+                ? `waypoints=${encodeURIComponent(waypoints.slice(1, -1).join('|'))}`
+                : '';
+            const travelModeParam = "travelmode=driving";
+            return `${baseUrl}&${originParam}&${destinationParam}&${waypointsParam}&${travelModeParam}`;
         }
     </script>
     <script async defer
