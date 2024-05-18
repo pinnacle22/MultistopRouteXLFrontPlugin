@@ -38,6 +38,19 @@
         #result {
             margin-top: 20px;
         }
+        #output {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        #map {
+            height: 500px;
+            width: 100%;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -54,7 +67,13 @@
         <button type="button" onclick="calculateMileage()">Calculate Mileage</button>
     </form>
     <div id="result"></div>
-    <script src="script_v1.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFwVkP3nwHAZb6oPCm9THB2db-_pMJt4M&callback=initMap" async defer></script>
+    <div id="output">
+        <h2>Optimized Route</h2>
+        <p id="total-time"></p>
+        <p id="total-distance"></p>
+    </div>
+    <div id="map"></div>
+    <script src="script_v4.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC2ZmUkIq9DpxE5qNntLNPCKcTx0xNuoXc&callback=initMap" async defer></script>
 </body>
 </html>
