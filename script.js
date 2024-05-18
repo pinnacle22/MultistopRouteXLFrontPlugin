@@ -1,3 +1,17 @@
+let map;
+let directionsRenderer;
+let directionsService;
+
+function initMap() {
+    map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 37.7749, lng: -122.4194 }, // Default center (San Francisco)
+        zoom: 8,
+    });
+    directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsService = new google.maps.DirectionsService();
+    directionsRenderer.setMap(map);
+}
+
 async function calculateMileage() {
     const origin = document.getElementById('origin').value.trim();
     const destinations = document.getElementById('destinations').value.trim().split('\n').map(addr => addr.trim());
@@ -12,8 +26,6 @@ async function calculateMileage() {
         stopover: true
     }));
 
-    const directionsService = new google.maps.DirectionsService();
-
     const request = {
         origin: origin,
         destination: destinations[destinations.length - 1],
@@ -25,9 +37,10 @@ async function calculateMileage() {
     directionsService.route(request, function(result, status) {
         if (status === 'OK') {
             displayResult(result);
+            directionsRenderer.setDirections(result);
         } else {
             console.error('Directions request failed due to ' + status);
-            alert('Failed to calculate the route. Please check the console for more details.');
+            alert('Failed to calculate the route. Status: ' + status);
         }
     });
 }
@@ -35,9 +48,11 @@ async function calculateMileage() {
 function displayResult(result) {
     const route = result.routes[0];
     const totalTime = route.legs.reduce((sum, leg) => sum + leg.duration.value, 0) / 3600; // Convert seconds to hours
-    document.getElementById('result').innerHTML = `<h2>Total Travel Time: ${totalTime.toFixed(2)} hours</h2>`;
-}
+    const totalDistance = route.legs.reduce((sum, leg) => sum + leg.distance.value, 0) / 1000; // Convert meters to kilometers
 
-function initMap() {
-    // Initialization code if needed
+    document.getElementById('total-time').innerText = `Total Travel Time: ${totalTime.toFixed(2)} hours`;
+    document.getElementById('total-distance').innerText = `Total Distance: ${totalDistance.toFixed(2)} km`;
+    
+    document.getElementById('output').style.display = 'block';
+    console.log('Result:', result);
 }
