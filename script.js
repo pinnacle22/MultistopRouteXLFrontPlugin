@@ -17,7 +17,7 @@ async function calculateMileage() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Basic ' + btoa('your-username:your-password') // Replace with your RouteXL credentials
+                'Authorization': 'Basic ' + btoa('PinnacleRouting:Pinteam500k!') // Replace with your RouteXL credentials
             },
             body: JSON.stringify(data)
         });
