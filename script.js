@@ -7,38 +7,37 @@ async function calculateMileage() {
         return;
     }
 
-    const addresses = [origin, ...destinations];
-    const data = {
-        locations: addresses.map(address => ({ address }))
+    const waypoints = destinations.map(destination => ({
+        location: destination,
+        stopover: true
+    }));
+
+    const directionsService = new google.maps.DirectionsService();
+
+    const request = {
+        origin: origin,
+        destination: destinations[destinations.length - 1],
+        waypoints: waypoints.slice(0, -1),
+        travelMode: 'DRIVING',
+        optimizeWaypoints: true
     };
 
-    try {
-        const response = await fetch('https://api.routexl.com/tour', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Basic ' + btoa('PinnacleRouting:Pinteam500k!') // Replace with your RouteXL credentials
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+    directionsService.route(request, function(result, status) {
+        if (status === 'OK') {
+            displayResult(result);
+        } else {
+            console.error('Directions request failed due to ' + status);
+            alert('Failed to calculate the route. Please check the console for more details.');
         }
-
-        const result = await response.json();
-        displayResult(result);
-    } catch (error) {
-        console.error('There has been a problem with your fetch operation:', error);
-        alert('Failed to calculate the route. Please check the console for more details.');
-    }
+    });
 }
 
 function displayResult(result) {
-    if (result.route && result.route.summary) {
-        const totalDistance = result.route.summary.totalDistance;
-        document.getElementById('result').innerHTML = `<h2>Total Distance: ${totalDistance} km</h2>`;
-    } else {
-        document.getElementById('result').innerHTML = `<h2>Unable to calculate distance. Please check your input.</h2>`;
-    }
+    const route = result.routes[0];
+    const totalTime = route.legs.reduce((sum, leg) => sum + leg.duration.value, 0) / 3600; // Convert seconds to hours
+    document.getElementById('result').innerHTML = `<h2>Total Travel Time: ${totalTime.toFixed(2)} hours</h2>`;
+}
+
+function initMap() {
+    // Initialization code if needed
 }
